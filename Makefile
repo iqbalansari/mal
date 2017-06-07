@@ -78,7 +78,7 @@ DOCKERIZE =
 #
 
 IMPLS = ada awk bash basic c d chuck clojure coffee common-lisp cpp crystal cs dart \
-	erlang elisp elixir es6 factor forth fsharp go groovy guile haskell \
+	erlang elisp elixir es6 factor forth fsharp go groovy guile gnu-smalltalk haskell \
 	haxe io java julia js kotlin logo lua make mal ocaml matlab miniMAL \
 	nim objc objpascal perl perl6 php pil plpgsql plsql powershell ps \
 	python r racket rpython ruby rust scala skew swift swift3 tcl ts vb vhdl \
@@ -175,6 +175,7 @@ forth_STEP_TO_PROG =   forth/$($(1)).fs
 fsharp_STEP_TO_PROG =  fsharp/$($(1)).exe
 go_STEP_TO_PROG =      go/$($(1))
 groovy_STEP_TO_PROG =  groovy/$($(1)).groovy
+gnu-smalltalk_STEP_TO_PROG = gnu-smalltalk/$($(1)).st
 java_STEP_TO_PROG =    java/target/classes/mal/$($(1)).class
 haskell_STEP_TO_PROG = haskell/$($(1))
 haxe_STEP_TO_PROG =    $(haxe_STEP_TO_PROG_$(HAXE_MODE))
@@ -215,7 +216,6 @@ vb_STEP_TO_PROG =      vb/$($(1)).exe
 vhdl_STEP_TO_PROG =    vhdl/$($(1))
 vimscript_STEP_TO_PROG = vimscript/$($(1)).vim
 guile_STEP_TO_PROG =   guile/$($(1)).scm
-
 
 # Needed some argument munging
 COMMA = ,
