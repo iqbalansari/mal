@@ -1,3 +1,5 @@
+FileStream fileIn: 'readline.st'.
+
 Object subclass: MAL [
     read: string [
         ^ string
@@ -11,10 +13,11 @@ Object subclass: MAL [
 ]
 
 Object subclass: REPL [
-    | mal |
+    | mal readline |
 
     initialize [
-        mal := MAL new
+        mal := MAL new.
+        readline := ReadLine new
     ]
 
     printOutput: string [
@@ -24,26 +27,41 @@ Object subclass: REPL [
         self printOutput: string ; printOutput: (String with: Character nl).
     ]
 
-    readInput: prompt [
+    readInputRaw: prompt [
         self printOutput: prompt.
         ^ stdin nextLine
+    ]
+
+    readInput: prompt interactively: interactive [
+        ^ interactive ifTrue: [ readline read: prompt ]
+                      ifFalse: [ self readInputRaw: prompt]
     ]
 
     rep: input [
         ^ mal print: (mal eval: (mal read: input))
     ]
 
-    loop [
+    loop: interactive [
         | input |
 
-        input := self readInput: 'user> '.
+        input := self readInput: 'user> ' interactively: interactive.
         (input isNil) ifTrue: [ ^ self ].
 
         self printOutputNl: (self rep: input).
-        self loop
+        self loop: interactive
+    ]
+
+    start [
+        | disableReadline dumbTerminal interactive |
+
+        disableReadline := (Smalltalk getenv: 'PERL_RL') = 'false'.
+        dumbTerminal := (Smalltalk getenv: 'TERM') = 'dumb'.
+        interactive := (disableReadline | dumbTerminal) not.
+
+        self loop: interactive.
     ]
 ]
 
-(REPL new) loop.
+(REPL new) start.
 
 ObjectMemory quit
