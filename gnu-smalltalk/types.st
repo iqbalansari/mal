@@ -152,3 +152,39 @@ Object subclass: Keyword [
         stream nextPutAll: symbol.
     ]
 ]
+
+Object subclass: MalBuiltinFunction [
+    | block restParamPosition |
+
+    MalBuiltinFunction class >> from: block [
+        ^ (self new) block: block
+    ]
+
+    block: aBlock [
+        | parameters |
+
+        restParamPosition := aBlock block arguments indexOf: #rest.
+        block := aBlock
+    ]
+
+    malApply: arguments [
+        | arglist |
+
+        restParamPosition = 0 ifTrue: [
+            arglist := arguments
+
+        ] ifFalse: [
+            | normalArgs restArg |
+
+            normalArgs := arguments copyFrom: 1 to: restParamPosition - 1.
+            restArg := arguments copyFrom: restParamPosition to: arguments size.
+            arglist := normalArgs , { List from: restArg }
+        ].
+
+        ^ block valueWithArguments: arglist
+    ]
+
+    malPrintOn: stream printReadably: printReadably [
+        stream nextPutAll: '#<built-in function>'
+    ]
+]
