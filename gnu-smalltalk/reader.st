@@ -162,11 +162,7 @@ Object subclass: Reader [
         meta := self readForm: tokens.
         value := self readForm: tokens.
 
-        ^ List from: {
-            #'with-meta' .
-            value .
-            meta .
-        }
+        ^ List from: { #'with-meta' . value . meta }
     ]
 
     readSequence: tokens startsWith: start endsWith: end [

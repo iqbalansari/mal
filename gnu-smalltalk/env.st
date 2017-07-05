@@ -16,6 +16,32 @@ Object subclass: MalEnvironment [
         ^ environment
     ]
 
+    MalEnvironment class >> bind: parameters exprs: arguments inheritingFrom: env [
+        | environment regularParams restParam |
+
+        environment := (MalEnvironment new) parent: env.
+        regularParams := parameters copyUpTo: #&.
+        restParam := parameters at: (regularParams size + 2) ifAbsent: [ nil ].
+
+        regularParams keysAndValuesDo: [ :index :parameter |
+            | argument |
+
+            argument := arguments at: index ifAbsent: [
+                self error: 'Wrong number of arguments provided'
+            ].
+            environment set: parameter to: argument.
+        ].
+
+        restParam ifNotNil: [
+            | argument |
+
+            argument := List from: (arguments copyFrom: (regularParams size + 1)).
+            environment set: restParam to: argument
+        ].
+
+        ^ environment
+    ]
+
     initialize [
         data := LookupTable new
     ]

@@ -91,6 +91,21 @@ OrderedCollection subclass: MalSequence [
         stream nextPutAll: (elementsRepr malJoinStr: ' ').
         stream nextPut: self closeParen
     ]
+
+    = aSequence [
+
+        ^ (aSequence isKindOf: MalSequence) ifTrue: [
+
+            self size = aSequence size and: [
+                (self with: aSequence) inject: true into: [ :result :element |
+                    result & (element first = element second)
+                ]
+            ]
+
+        ] ifFalse: [
+            false
+        ]
+    ]
 ]
 
 MalSequence subclass: List [
@@ -103,7 +118,6 @@ MalSequence subclass: List [
     closeParen [
         ^ $)
     ]
-
 ]
 
 MalSequence subclass: Vector [
@@ -151,6 +165,14 @@ Object subclass: Keyword [
     malPrintOn: stream printReadably: printReadably [
         stream nextPutAll: symbol.
     ]
+
+    = aKeyword [
+        ^ (aKeyword class = Keyword and: [ aKeyword symbol = self symbol ])
+    ]
+
+    hash [
+        ^ self symbol hash
+    ]
 ]
 
 Object subclass: MalBuiltinFunction [
@@ -186,5 +208,25 @@ Object subclass: MalBuiltinFunction [
 
     malPrintOn: stream printReadably: printReadably [
         stream nextPutAll: '#<built-in function>'
+    ]
+]
+
+Object subclass: MalFunction [
+    | block |
+
+    MalFunction class >> from: block [
+        ^ (self new) block: block
+    ]
+
+    block: aBlock [
+        block := aBlock
+    ]
+
+    malApply: arguments [
+        ^ block value: arguments
+    ]
+
+    malPrintOn: stream printReadably: printReadably [
+        stream nextPutAll: '#<function>'
     ]
 ]
