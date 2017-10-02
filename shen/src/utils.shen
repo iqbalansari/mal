@@ -1,4 +1,6 @@
-(package utils (append [assoc->dict dict->assoc list->vector vector->list]
+(package utils (append [assoc->dict dict->assoc]
+                       [list->vector vector->list]
+                       [list->assoc]
                        [flatten all?]
                        [string-join]
                        [read-line read-line/or prompt/or println])
@@ -35,6 +37,14 @@
 
 (define vector->list
   Vector -> (vector->list-h Vector []))
+
+(define list->assoc-h
+  [ ]                  Acc -> (reverse Acc)
+  [ Key ]              Acc -> (error "list->assoc called with list with old number of elements")
+  [ Key Value | Tail ] Acc -> (list->assoc-h Tail [ (@p Key Value) | Acc ]))
+
+(define list->assoc
+  List -> (list->assoc-h List []))
 
 \* Sequence helpers *\
 (define flatten-h
