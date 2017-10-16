@@ -1,7 +1,3 @@
-(define to-list
-  Vector -> (vector->list Vector) where (vector? Vector)
-  Any    -> Any)
-
 (define pr-and-join
   Elems Readably? Sep -> (let Reps (map (/. X (pr-str X Readably?)) Elems)
                            (make-string "~A" (string-join Reps Sep))))
@@ -22,7 +18,18 @@
   Any Other    -> (= Any Other) where (not (and (sequence? Any) (sequence? Other)))
   Seq OtherSeq -> (and (= (mal.count Seq) (mal.count OtherSeq))
                        (all? (/. Pair (mal.= (fst Pair) (snd Pair)))
-                             (zip (to-list Seq) (to-list OtherSeq)))))
+                             (zip (seq->list Seq) (seq->list OtherSeq)))))
+
+(define mal.cons
+  Any Sequence -> (cons Any (seq->list Sequence)))
+
+(define mal.concat-h
+  [ ]                       Acc -> Acc
+  [ List OtherList | Rest ] Acc -> (mal.concat [ (append List OtherList) | Rest])
+  [ List ]                  Acc -> List)
+
+(define mal.concat
+  Lists -> (mal.concat-h (map seq->list Lists) []))
 
 (set ns [(@p +       (mal-builtin-fn [a b]    +))
          (@p -       (mal-builtin-fn [a b]    -))
@@ -55,4 +62,6 @@
          (@p atom?       (mal-builtin-fn [atom] atom?))
          (@p deref       (mal-builtin-fn [atom] deref))
          (@p reset!      (mal-builtin-fn [atom val] reset!))
-         (@p swap!       (mal-builtin-fn [atom func & args] swap!))])
+         (@p swap!       (mal-builtin-fn [atom func & args] swap!))
+         (@p cons        (mal-builtin-fn [elem list] mal.cons))
+         (@p concat      (mal-builtin-fn [& lists] mal.concat))])

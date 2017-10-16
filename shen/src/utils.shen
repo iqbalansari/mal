@@ -1,7 +1,7 @@
 (package utils (append [assoc->dict dict->assoc]
                        [list->vector vector->list]
-                       [list->assoc]
-                       [flatten zip last all?]
+                       [list->assoc ]
+                       [seq->list flatten zip last all?]
                        [string-join]
                        [read-line read-line/or prompt/or println])
 
@@ -47,6 +47,11 @@
   List -> (list->assoc-h List []))
 
 \* Sequence helpers *\
+(define seq->list
+  Vector -> (vector->list Vector) where (vector? Vector)
+  nil    -> []
+  Any    -> Any)
+
 (define flatten-h
   [ ] Acc             -> Acc
   [ Head | Tail ] Acc -> (flatten-h Tail (append Acc Head)))
