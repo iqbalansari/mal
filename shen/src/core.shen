@@ -31,6 +31,32 @@
 (define mal.concat
   Lists -> (mal.concat-h (map seq->list Lists) []))
 
+(define mal.nth
+  <>               _     -> (error "'nth' index out of range")
+  []               _     -> (error "'nth' index out of range")
+
+  [ Head | Tail  ] 0     -> Head
+  (@v Head Tail  ) 0     -> Head
+
+  [ _ | Tail     ] Index -> (mal.nth Tail (- Index 1))
+  (@v _ Tail     ) Index -> (mal.nth Tail (- Index 1)))
+
+(define mal.first
+  []           -> nil
+  <>           -> nil
+  nil          -> nil
+
+  [ Head | _ ] -> Head
+  (@v Head  _) -> Head)
+
+(define mal.rest
+  []            -> []
+  <>            -> []
+  nil           -> []
+
+  [ _ | Tail  ] -> Tail
+  ( @v _ Tail ) -> (vector->list Tail))
+
 (set ns [(@p +       (mal-builtin-fn [a b]    +))
          (@p -       (mal-builtin-fn [a b]    -))
          (@p *       (mal-builtin-fn [a b]    *))
@@ -64,4 +90,7 @@
          (@p reset!      (mal-builtin-fn [atom val] reset!))
          (@p swap!       (mal-builtin-fn [atom func & args] swap!))
          (@p cons        (mal-builtin-fn [elem list] mal.cons))
-         (@p concat      (mal-builtin-fn [& lists] mal.concat))])
+         (@p concat      (mal-builtin-fn [& lists] mal.concat))
+         (@p nth         (mal-builtin-fn [seq index] mal.nth))
+         (@p first       (mal-builtin-fn [seq] mal.first))
+         (@p rest        (mal-builtin-fn [seq] mal.rest))])

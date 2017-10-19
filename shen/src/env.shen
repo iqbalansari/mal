@@ -17,14 +17,12 @@
   [ env Data _ ] Symbol Value -> (dict-> Data Symbol Value))
 
 (define find-env
-  [ env Data nil   ] Symbol -> (trap-error (<-dict Data Symbol)
-                                           (/. _ not-found))
-  [ env Data Outer ] Symbol -> (trap-error (<-dict Data Symbol)
-                                           (/. _ (find-env Outer Symbol))))
+  [ env Data nil   ] Symbol -> (<-dict/or Data Symbol (freeze unbound))
+  [ env Data Outer ] Symbol -> (<-dict/or Data Symbol (freeze (find-env Outer Symbol))))
 
 (define get-env
   Env Symbol -> (let Val (find-env Env Symbol)
-                  (if (= Val not-found)
+                  (if (= Val unbound)
                       (error "'~A' not found" Symbol)
                       Val)))
 

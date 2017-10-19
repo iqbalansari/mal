@@ -4,6 +4,7 @@
                        \* Builtin function constructor *\
                        [mal-fn? mal-fn mal-fn-meta mal-fn-closure]
                        [mal-builtin-fn? mal-builtin-fn]
+                       [mal-macro? mal-macro]
                        [& fn builtin-fn]
                        [atom atom? deref reset! swap!]
                        [list? sequence? truthy?]
@@ -66,21 +67,6 @@
 (define fold-args
   Params Args -> (fold-args-h Params Args []))
 
-(define mal-fn
-  Closure Meta -> (@p fn Closure Meta))
-
-(define mal-fn-closure
-  (@p fn Closure _) -> Closure
-  Any               -> (error "'~A' is not a mal-fn" Any))
-
-(define mal-fn-meta
-  (@p fn _ Meta) -> Meta
-  Any            -> (error "'~A' is not a mal-fn" Any))
-
-(define mal-fn?
-  (@p fn         _ ) -> true
-  _                  -> false)
-
 (define extract-args
   []                  _    -> []
   [ cons A   []     ] Args -> [ [ hd Args ] ]
@@ -123,6 +109,14 @@
 (define mal-fn?
   (@p fn _) -> true
   _         -> false)
+
+(define mal-macro
+  (@p fn Fn) -> (do (put Fn macro true) (@p fn Fn))
+  _          -> (error "Cannot convert non-function value to a macro"))
+
+(define mal-macro?
+  (@p fn Fn) -> (get Fn macro)
+  _          -> false)
 
 (define mal-apply
   (@p fn         Fn)      Args -> ((get Fn fn-closure) Args)
