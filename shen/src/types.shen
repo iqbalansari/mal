@@ -6,6 +6,7 @@
                        [mal-builtin-fn? mal-builtin-fn]
                        [mal-macro? mal-macro]
                        [& fn builtin-fn]
+                       [string->keyword keyword? keyword->string]
                        [atom atom? deref reset! swap!]
                        [list? sequence? truthy?]
                        [fold-args mal-apply])
@@ -38,7 +39,7 @@
 (define intern-keyword
   (@s ":" String) -> (@p keyword (@s ":" String))
   String          -> (@p keyword (@s ":" String)) where (string? String)
-  _               -> (error "'string->keyword' passed a non-string argument"))
+  _               -> (error "'intern-keyword' passed a non-string argument"))
 
 (define keyword?
   (@p keyword _) -> true

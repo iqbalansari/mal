@@ -1,8 +1,9 @@
 (package utils (append [assoc->dict dict->assoc]
                        [list->vector vector->list]
-                       [list->assoc ]
+                       [list->assoc]
                        [seq->list flatten zip last all?]
                        [string-join]
+                       [last butlast]
                        [read-line read-line/or prompt/or println])
 
 \* Data structure helpers *\
@@ -71,6 +72,10 @@
   [ Head ]        ->  Head
   [ Head | Tail ] -> (last Tail))
 
+(define butlast
+  [ Head ]        -> []
+  [ Head | Tail ] -> [ Head | (butlast Tail) ])
+
 (define all-list?
   Pred []      -> true
   Pred [H | T] -> (if (Pred H) (all? Pred T) false))
@@ -82,6 +87,11 @@
 (define all?
   Pred Sequence -> (all-string? Pred Sequence) where (string? Sequence)
   Pred Sequence -> (all-list? Pred Sequence))
+
+\* Number helpers *\
+(define max
+  N M -> N where (> N M)
+  _ M -> M)
 
 \* String helpers *\
 (define strlen-h

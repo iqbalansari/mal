@@ -1,6 +1,5 @@
 (package tokenizer (append [tokenize]
                            [keyword]
-                           [atom]
                            [open-paren close-paren]
                            [open-bracket close-bracket]
                            [open-brace close-brace]
