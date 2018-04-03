@@ -8,7 +8,6 @@
                         [tilde splice-unquote]
                         [single-quote backtick at caret]
                         \* Special symbols from reader *\
-                        [nil]
                         [unquote splice-unquote]
                         [quote quasiquote deref with-meta]
                         \* nil type from types.shen *\

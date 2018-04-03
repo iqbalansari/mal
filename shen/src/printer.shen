@@ -1,8 +1,7 @@
 (package printer (append [pr-str]
                          \* Additional type checks *\
-                         [list? nil? keyword? mal-fn? mal-builtin-fn?]
-                         [fn builtin-fn]
-                         [keyword->string]
+                         [atom? list? nil? keyword? mal-fn? mal-builtin-fn?]
+                         [deref keyword->string]
                          \* Data structure helpers *\
                          [flatten vector->list dict->assoc]
                          [string-join])
@@ -49,6 +48,7 @@
                            (list?           Form) (pr-list Form Readably?)
                            (vector?         Form) (pr-vector Form Readably?)
                            (dict?           Form) (pr-hash-map Form Readably?)
+                           (atom?           Form) (make-string "(atom ~A)" (deref Form))
                            (mal-fn?         Form) "#<fn>"
                            (mal-builtin-fn? Form) "#<builtin-fn>"
                            true                   (@s "shen:" (make-string "~S" Form))))

@@ -5,6 +5,7 @@
                        [mal-fn? mal-fn mal-fn-meta mal-fn-closure]
                        [mal-builtin-fn? mal-builtin-fn]
                        [& fn builtin-fn]
+                       [atom atom? deref reset! swap!]
                        [list? sequence? truthy?]
                        [fold-args mal-apply])
 
@@ -128,4 +129,25 @@
   (@p builtin-fn Closure) Args -> (Closure Args)
   _                         _  -> (error "'mal-apply' passed a non-function"))
 
+\* Atom type *\
+(define atom
+  Val -> (@p atom (@v Val <>)))
+
+(define atom?
+  (@p atom _) -> true
+  _           -> false)
+
+(define deref
+  (@p atom (@v Val _)) -> Val
+  _                    -> (error "'deref' called on non-atom"))
+
+(define reset!
+  (@p atom Vector) Val -> (do (vector-> Vector 1 Val) Val)
+  _                _   -> (error "'reset!' called on non-atom"))
+
+(define swap!
+  (@p atom Vector) Func Args -> (let Val    (<-vector Vector 1)
+                                     NewVal (mal-apply Func [ Val | Args ])
+                                  (do (vector-> Vector 1 NewVal) NewVal))
+  _                _    _    -> (error "'swap!' called on non-atom"))
 )
