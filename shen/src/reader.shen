@@ -1,13 +1,14 @@
 (package reader (append [read-str]
                         [tokenize]
-                        [keyword]
                         \* Special tokens from tokenizer *\
+                        [keyword]
                         [open-paren close-paren]
                         [open-bracket close-bracket]
                         [open-brace close-brace]
                         [tilde splice-unquote]
                         [single-quote backtick at caret]
                         \* Special symbols from reader *\
+                        [nil]
                         [unquote splice-unquote]
                         [quote quasiquote deref with-meta]
                         \* nil type from types.shen *\
@@ -81,7 +82,7 @@
   <meta-form>)
 
 (define read-str
-  ""  -> (intern ":no-input")
+  ""  -> nil
   Str -> (compile (function <form>) (tokenize Str)))
 
 )

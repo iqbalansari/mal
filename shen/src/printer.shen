@@ -1,7 +1,8 @@
 (package printer (append [pr-str]
                          \* Additional type checks *\
-                         [list? nil?]
-                         [keyword? keyword->string]
+                         [list? nil? keyword? mal-fn? mal-builtin-fn?]
+                         [fn builtin-fn]
+                         [keyword->string]
                          \* Data structure helpers *\
                          [flatten vector->list dict->assoc]
                          [string-join])
@@ -39,15 +40,17 @@
                        (pr-sequence "{" Elements "}" Readably?)))
 
 (define pr-str
-  Form Readably? -> (cases (symbol?  Form) (make-string "~A" Form)
-                           (boolean? Form) (make-string "~A" Form)
-                           (nil?     Form) (make-string "~A" Form)
-                           (number?  Form) (make-string "~A" Form)
-                           (string?  Form) (pr-string Form Readably?)
-                           (keyword? Form) (keyword->string Form)
-                           (list?    Form) (pr-list Form Readably?)
-                           (vector?  Form) (pr-vector Form Readably?)
-                           (dict?    Form) (pr-hash-map Form Readably?)
-                           true            (@s "shen:" (make-string "~S" Form))))
+  Form Readably? -> (cases (symbol?         Form) (make-string "~A" Form)
+                           (boolean?        Form) (make-string "~A" Form)
+                           (nil?            Form) (make-string "~A" Form)
+                           (number?         Form) (make-string "~A" Form)
+                           (string?         Form) (pr-string Form Readably?)
+                           (keyword?        Form) (keyword->string Form)
+                           (list?           Form) (pr-list Form Readably?)
+                           (vector?         Form) (pr-vector Form Readably?)
+                           (dict?           Form) (pr-hash-map Form Readably?)
+                           (mal-fn?         Form) "#<fn>"
+                           (mal-builtin-fn? Form) "#<builtin-fn>"
+                           true                   (@s "shen:" (make-string "~S" Form))))
 
 )

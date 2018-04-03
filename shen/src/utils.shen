@@ -1,7 +1,7 @@
 (package utils (append [assoc->dict dict->assoc]
                        [list->vector vector->list]
                        [list->assoc]
-                       [flatten all?]
+                       [flatten zip last all?]
                        [string-join]
                        [read-line read-line/or prompt/or println])
 
@@ -54,6 +54,18 @@
 (define flatten
   Lists -> (flatten-h Lists []))
 
+(define zip-h
+  Any       [ ]         Acc -> (reverse Acc)
+  [ ]       Any         Acc -> (reverse Acc)
+  [ H | T ] [ H' | T' ] Acc -> (zip-h T T' [ (@p H H') | Acc ]))
+
+(define zip
+  List OtherList -> (zip-h List OtherList []))
+
+(define last
+  [ Head ]        ->  Head
+  [ Head | Tail ] -> (last Tail))
+
 (define all-list?
   Pred []      -> true
   Pred [H | T] -> (if (Pred H) (all? Pred T) false))
@@ -63,8 +75,8 @@
   Pred (@s Char Rest) -> (if (Pred Char) (all? Pred Rest) false))
 
 (define all?
-  Pred Sequence -> (cases (string? Sequence) (all-string? Pred Sequence)
-                          true               (all-list? Pred Sequence)))
+  Pred Sequence -> (all-string? Pred Sequence) where (string? Sequence)
+  Pred Sequence -> (all-list? Pred Sequence))
 
 \* String helpers *\
 (define strlen-h

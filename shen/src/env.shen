@@ -1,6 +1,7 @@
 (package env (append [nil]
-                     [make-env assoc->env]
+                     [make-env assoc->env bindings->env]
                      [set-env find-env get-env]
+                     [fold-args]
                      [assoc->dict])
 
 (define make-env
@@ -8,6 +9,9 @@
 
 (define assoc->env
   Assoc Outer -> [env (assoc->dict Assoc) Outer])
+
+(define bindings->env
+  Params Args Outer -> (assoc->env (fold-args Params Args) Outer))
 
 (define set-env
   [ env Data _ ] Symbol Value -> (dict-> Data Symbol Value))

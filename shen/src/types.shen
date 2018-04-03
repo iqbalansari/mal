@@ -1,9 +1,10 @@
 (package types (append [nil nil?]
                        [list?]
                        [intern-keyword keyword? keyword->string]
-                       \* Builtin function constructor *\
-                       [mal-builtin-fn]
-                       [mal-apply])
+                       [mal-fn mal-fn? mal-builtin-fn mal-builtin-fn?]
+                       [& fn builtin-fn]
+                       [list? sequence? truthy?]
+                       [fold-args mal-apply])
 
 \* In shen it seems [1] is a cons but not [], this consistent with rest of the
    system since shen gives the following
@@ -19,9 +20,12 @@
    []
 
    So [] might be any of the above. However we assume [] is always a list
- *\
+*\
 (define list?
   Element -> (or (cons? Element) (= Element [])))
+
+(define sequence?
+  Element -> (or (list? Element) (vector? Element)))
 
 (define nil?
   Element -> (= Element nil))
@@ -40,6 +44,11 @@
   (@p keyword String) -> String
   _                   -> (error "'keyword->string' provided a non-keyword argument"))
 
+(define truthy?
+  false -> false
+  nil   -> false
+  _     -> true)
+
 \* Function types *\
 
 (define fold-args-h
@@ -53,6 +62,9 @@
 
 (define fold-args
   Params Args -> (fold-args-h Params Args []))
+
+(define mal-fn
+  Closure -> (@p fn Closure))
 
 (define extract-args
   []                  _    -> []
