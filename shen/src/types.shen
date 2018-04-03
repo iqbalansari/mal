@@ -1,7 +1,9 @@
 (package types (append [nil nil?]
                        [list?]
                        [intern-keyword keyword? keyword->string]
-                       [mal-fn mal-fn? mal-builtin-fn mal-builtin-fn?]
+                       \* Builtin function constructor *\
+                       [mal-fn? mal-fn mal-fn-meta mal-fn-closure]
+                       [mal-builtin-fn? mal-builtin-fn]
                        [& fn builtin-fn]
                        [list? sequence? truthy?]
                        [fold-args mal-apply])
@@ -64,7 +66,19 @@
   Params Args -> (fold-args-h Params Args []))
 
 (define mal-fn
-  Closure -> (@p fn Closure))
+  Closure Meta -> (@p fn Closure Meta))
+
+(define mal-fn-closure
+  (@p fn Closure _) -> Closure
+  Any               -> (error "'~A' is not a mal-fn" Any))
+
+(define mal-fn-meta
+  (@p fn _ Meta) -> Meta
+  Any            -> (error "'~A' is not a mal-fn" Any))
+
+(define mal-fn?
+  (@p fn         _ ) -> true
+  _                  -> false)
 
 (define extract-args
   []                  _    -> []
