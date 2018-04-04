@@ -9,22 +9,25 @@
                        [string->keyword keyword? keyword->string]
                        [atom atom? deref reset! swap!]
                        [list? sequence? truthy?]
-                       [fold-args mal-apply])
+                       [fold-args mal-apply]
+                       [copy]
+                       [assoc->dict dict->assoc]
+                       [list->vector vector->list])
 
 \* In shen it seems [1] is a cons but not [], this consistent with rest of the
-   system since shen gives the following
+system since shen gives the following
 
-   For empty function application
+For empty function application
 
-   (0-) ()
-   []
+(0-) ()
+[]
 
-   For empty list
+For empty list
 
-   (1-) []
-   []
+(1-) []
+[]
 
-   So [] might be any of the above. However we assume [] is always a list
+So [] might be any of the above. However we assume [] is always a list
 *\
 (define list?
   Element -> (or (cons? Element) (= Element [])))
@@ -145,4 +148,15 @@
                                      NewVal (mal-apply Func [ Val | Args ])
                                   (do (vector-> Vector 1 NewVal) NewVal))
   _                _    _    -> (error "'swap!' called on non-atom"))
+
+(define copy
+  List               -> (map (/. X X) List)                  where (list? List)
+  Vector             -> (list->vector (vector->list Vector)) where (vector? Vector)
+  Dict               -> (assoc->dict (dict->assoc Dict))     where (dict? Dict)
+  (@p fn Fn)         -> (let NewFn (gensym mal-fn)
+                          (do (put NewFn fn-closure (get Fn fn-closure))
+                              (put NewFn fn-meta    (get Fn fn-meta))
+                              (put NewFn macro      (get Fn macro))
+                              (@p fn NewFn)))
+  (@p builtin-fn Fn) -> (@p builtin-fn Fn))
 )

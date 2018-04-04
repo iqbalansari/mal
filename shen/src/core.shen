@@ -111,6 +111,33 @@
   nil    -> false
   Symbol -> (symbol? Symbol))
 
+(define mal.readline
+  Prompt -> (prompt/or Prompt (freeze nil)))
+
+(define mal.meta
+  Value -> (get/or Value meta (freeze nil)))
+
+(define mal.with-meta
+  Value Meta -> (let Copy (copy Value)
+                  (do (put Copy meta Meta) Copy)))
+
+(define mal.conj
+  List   Elements -> (append (reverse Elements) List)                        where (list? List)
+  Vector Elements -> (list->vector (append (vector->list Vector) Elements))  where (vector? Vector)
+  _      _        -> (error "'conj' should be passed a list or vector"))
+
+(define mal.seq
+  nil    -> nil
+  []     -> nil
+  ""     -> nil
+  <>     -> nil
+  List   -> List                  where (list? List)
+  Vector -> (vector->list Vector) where (vector? Vector)
+  String -> (explode String)      where (string? String)
+  _      -> (error "'seq' should be passed a list, vector, string or nil as the argument"))
+
+(define mal.time-ms -> (* (get-time unix) 1000))
+
 (set ns [(@p +       (mal-builtin-fn [a b]    +))
          (@p -       (mal-builtin-fn [a b]    -))
          (@p *       (mal-builtin-fn [a b]    *))
@@ -177,4 +204,14 @@
          (@p keys        (mal-builtin-fn [hashmap] dict-keys))
          (@p vals        (mal-builtin-fn [hashmap] dict-values))
          (@p assoc       (mal-builtin-fn [hashmap & list] mal.assoc))
-         (@p dissoc      (mal-builtin-fn [hashmap & list] mal.dissoc))])
+         (@p dissoc      (mal-builtin-fn [hashmap & list] mal.dissoc))
+         (@p readline    (mal-builtin-fn [prompt] mal.readline))
+         (@p meta        (mal-builtin-fn [value] mal.meta))
+         (@p with-meta   (mal-builtin-fn [value meta] mal.with-meta))
+         (@p string?     (mal-builtin-fn [value] string?))
+         (@p number?     (mal-builtin-fn [value] number?))
+         (@p fn?         (mal-builtin-fn [value] (/. Value (or (mal-fn? Value) (mal-builtin-fn? Value)))))
+         (@p macro?      (mal-builtin-fn [value] mal-macro?))
+         (@p seq         (mal-builtin-fn [value] mal.seq))
+         (@p conj        (mal-builtin-fn [seq & rest] mal.conj))
+         (@p time-ms     (mal-builtin-fn [] mal.time-ms))])
